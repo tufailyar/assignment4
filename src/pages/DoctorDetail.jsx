@@ -24,21 +24,14 @@ useEffect(() => {
     const response = await fetch(
       `http://localhost:5000/doctor/detail/${id}`
     );
-
-    const topResponse = await fetch(
-  "http://localhost:5000/doctor/top10"
-);
-
-const topData = await topResponse.json();
-
-  const ids=topData.map(d=>d.id);
-  if(ids.includes(Number(id))){
-    setIsTopTen(true);
+  const data=await response.json();
+  if(response.ok) {
+    setDoctor(data.doctor);
+    setIsTopTen(data.topten);
   }
-
-
-    const data = await response.json();
-    setDoctor(data);
+  else{
+    alert(data.error);
+  }
   };
 
   fetchDoctor();

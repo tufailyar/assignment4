@@ -19,7 +19,6 @@ const doctorSlice=createSlice({
       state.step=1;
     }
   }
-
 });
 export const {setDoctorId,nextStep,reset}=doctorSlice.actions;
 export default doctorSlice.reducer;

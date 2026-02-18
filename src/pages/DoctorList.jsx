@@ -4,6 +4,73 @@ import { useNavigate } from "react-router-dom";
 import { useSearchParams } from "react-router-dom";
 
 
+/*
+
+const [params]=useSearchParams();
+const searchUrl=params.get("search") || "";
+const cityUrl=params.get("city") || "";
+const specialityUrl=params.get("speciality") || "";
+
+const [search,setSearch]=useState(searchUrl);
+const [city,setCity]=useState(cityUrl);
+const [speciality,setSpeciality]=useState(speciality);
+
+const [doctors,setDoctors]=useState([]);
+const [page,setPage]=useState(1);
+const [hasmore,setHasmore]=useState(true);
+const [loading,setLoading]=useState(false);
+
+useEffect(()=>{
+setDoctors([]);
+setPage(1);
+setHasmore(true);
+setSearch(searchUrl);
+setCity(cityUrl);
+setSpeciality(speciality)
+ },[]);
+
+
+ useEffect(()=>{
+  const fetchDoctors=async ()=>{
+  setLoading(true);
+  try{
+  const response= await fetch(`http:localhost:5000/doctor/list?page=${page}&search=${search}&city=${city}&speciality=${speciality}`
+  const data=response.json();
+  if(response.ok){
+    if(data.length==0) setHasmore(fasle);
+      setDoctors((prev)=>[...prev,...data]);
+  }
+}
+      catch(error){
+      console.log(error;)
+      }
+}
+  
+      fetchDoctors();
+  },[page,search,city,speciality])
+
+
+  useEffect(()=>{
+     let timeout;
+    const handleScroll=()=>{
+      if(timout) return;
+      
+      timeout=setTimeout(()=>{
+       if(window.innerHeight+window.scrollY>=document.body.offsetHeight-50){
+      setPage((prev)=>prev+1);
+      }
+      timeout=null;
+        },400)
+      }
+    
+
+    window.addEventListner("scroll",handleScroll);
+    },[])
+
+*/
+
+
+
 function DoctorList() {
 
   const [params] = useSearchParams();
@@ -76,9 +143,10 @@ useEffect(()=>{
 
  let timeout;
 const handleScroll=()=>{
-  
+
   if(timeout) return;
-    console.log("hello from scroll");
+        console.log("hello from scroll");
+
 
   timeout=setTimeout(()=>{
      if (
@@ -87,7 +155,7 @@ const handleScroll=()=>{
         setPage((prev) => prev + 1);
       }
         timeout=null;
-    },800);
+    },500);
   };
   window.addEventListener("scroll", handleScroll);
 
@@ -97,20 +165,6 @@ const handleScroll=()=>{
 
 
 
-  // useEffect(() => {
-  //   const handleScroll = () => {
-  //     if (
-  //       window.innerHeight + window.scrollY >=
-  //       document.body.offsetHeight - 50
-  //     ) {
-  //       setPage((prev) => prev + 1);
-  //     }
-  //   };
-
-  //   window.addEventListener("scroll", handleScroll);
-
-  //   return () => window.removeEventListener("scroll", handleScroll);
-  // }, []);
 
   return (
     <div style={{ padding: "20px" }}>
@@ -118,28 +172,27 @@ const handleScroll=()=>{
 
       <div style={{ marginBottom: "20px" }}>
 
-  <input
-    type="text"
-    placeholder="Search by name"
-    value={search}
-    onChange={(e) => {
-      setDoctors([]);
-      setPage(1);
-      setSearch(e.target.value);
-      setHasMore(true);
+ <input
+ type="text"
+ value={search}
+ placeholder="search by name"
+ onChange={(e)=>{
+  setDoctors([]);
+  setSearch(e.target.value);
+  setHasMore(true);
+  setPage(1);
+ }}
 
-    }}
-  />
+ >
+ </input>
 
-  <select
-    value={city}
-    onChange={(e) => {
-      setDoctors([]);
-      setPage(1);
-      setCity(e.target.value);
-      setHasMore(true);
-
-    }}
+  <select  value={city}
+  onChange={(e)=>{
+    setCity(e.target.value);
+    setDoctors([]);
+    setPage(1);
+    setHasMore(true);
+  }}
   >
     <option value="">All Cities</option>
     <option>Mumbai</option>
@@ -179,30 +232,20 @@ const handleScroll=()=>{
 
 </div>
 
+{
+  doctors.map((D)=>(
+    <div  key={D.id} onClick={()=>navigate(`/doctor/${D.id}`)} style={{border:"1px solid black",cursor:"pointer",  margin:"10px", padding:"5px", display:"flex", gap:"20px"}}>
+      <img src={`http://localhost:5000/uploads/${D.profile_picture}`} width={140} alt="" />
+      <div>
+        <h2>{D.name}</h2>
+        <p>name: {D.speciality}</p>
+        <p>city: {D.city}</p>
+        <p>years of experience: {D.years_of_experience}</p>
+      </div>
 
-      {doctors.map((doc) => (
-        <div onClick={()=>navigate(`/doctor/${doc.id}`)}
-          key={doc.id}
-        style={{
-           border: "1px solid #ccc",
-            padding: "15px",
-            marginBottom: "10px",
-            display: "flex",
-            gap: "15px"
-          }}
-        >
-    <img src={`http://localhost:5000/uploads/${doc.profile_picture}`} alt="profile" width="80" height="80"/>
-
-        <div>
-            <h3>{doc.name}</h3>
-         
-          <p>Speciality: {doc.speciality}</p>
-          <p>Experience: {doc.years_of_experience} years</p>
-          <p>City: {doc.city}</p>
-          <p>Fee: ₹{doc.consultation_fee}</p>
-           </div>
-  </div>
-      ))}
+    </div>
+  ))
+}
 
     {loading && <p>Loading more doctors...</p>}
     {!hasMore && <p>No more doctors available</p>}
